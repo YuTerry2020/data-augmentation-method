@@ -1,3 +1,13 @@
+######## image preprocessing  #########
+#
+# Author: Teng Yang Yu
+# Date: 2020/05/06
+# Description: 
+# This program has three methods to do data preprocessing
+
+## Some of the code is copied from Google's example
+
+
 # clean blackground
 import cv2
 import numpy as np
@@ -5,52 +15,7 @@ import imutils
 import time
 import glob
 
-def clean_noise():
-    count = 2370
-    frame = cv2.imread('./clean/' +'output_' + str(count) + '.jpg')
-    frame = imutils.resize(frame, width=800)
-    image = cv2.fastNlMeansDenoisingColored(frame,None,10,10,7,21)
-    # 图像归一化
-    fi = frame / 255.0
-    # 伽马变换
-    gamma = 0.4
-    out = np.power(fi, gamma)
-    # 以下只能灰階使用
-    # 使用全局直方图均衡化
-    grayimg = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    equa = cv2.equalizeHist(grayimg)
 
-    cv2.imshow('DeNoisingColor', image)
-    # cv2.imshow('gamma', out)
-    cv2.imshow('equa', equa)
-    
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-def noise():
-	count = 1001
-	while True :        
-		frame = cv2.imread('./clean/' +'output_' + str(count) + '.jpg')
-		# frame = cv2.imread('./sample/' +'GetImage00' + str(count) + '.jpg')
-		# frame = imutils.resize(frame, width=800) 
-		image = cv2.fastNlMeansDenoisingColored(frame,None,10,10,7,21)
-		# kernel = np.array([(-0.125,-0.125,-0.125,-0.125,-0.125),
-        #                   (-0.125, 0.25, 0.25, 0.25, -0.125),
-        #                   (-0.125, 0.25, 1, 0.25, -0.125),
-        #                   (-0.125, 0.25, 0.25, 0.25, -0.125),
-        #                   (-0.125,-0.125,-0.125,-0.125,-0.125)]) 
-        # result = cv2.filter2D(eq, ddepth=-1, kernel=kernel, 
-        #                       anchor=(-1, -1), delta=0, borderType=cv2.BORDER_DEFAULT)
-		
-		cv2.imwrite('D:/tensorflow_object_detection/flask-video-stream-master/image/NLM/'+'output_' + str(count) + '.jpg', image)
-		print("picture ", count," is finish!")
-		count += 1
-		
-		# key = cv2.waitKey(1)
-		if count == 92:
-			break
-
-	cv2.destroyAllWindows()
 
 def hisEqulColor(img):
     ycrcb = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
@@ -61,15 +26,17 @@ def hisEqulColor(img):
     cv2.cvtColor(ycrcb, cv2.COLOR_YCR_CB2BGR, img)
     return img
 
+# 直方圖均衡化
 def light():
-    for file in glob.glob("D:/tensorflow_object_detection/flask-video-stream-master/temp/*.jpg"):        
+    for file in glob.glob("D:/tensorflow_object_detection/image/original/*.jpg"):        
         # print('file ', file)
         frame = cv2.imread(file)
         # frame = cv2.imread('./sample/' +'GetImage00' + str(count) + '.jpg')
         # frame = imutils.resize(frame, width=800) 
         # image = cv2.fastNlMeansDenoisingColored(frame,None,10,10,7,21)
         eq = hisEqulColor(frame)
-        # kernel_size = 5
+        # 邊界強化
+	# kernel_size = 5
 		# kernel = np.ones((kernel_size, kernel_size), dtype=np.float32) / kernel_size**2
 
         # kernel = np.array([(-0.125,-0.125,-0.125,-0.125,-0.125),
@@ -104,6 +71,7 @@ def gray():
 		cv2.imwrite('D:/tensorflow_object_detection/augmentation/image/'+ file[-15:-4] + '_gray.jpg', gray)
 		print("picture ", file[-15:-4]," is finish!")
 
+# 背景變黑的方法，但是需要自行針對圖片要辨識的物件作微調
 def picture():
 	for file in glob.glob("D:/tensorflow_object_detection/flask-video-stream-master/temp/*.jpg"):
 		# print('file ', file)
